@@ -62,7 +62,7 @@ namespace Morphology
 				ushort &m = vx[__thread_id];
 				calc_working_range(start, stop);
 				for (size_t idx = start; idx < stop; idx++) {
-					if (m > vol[idx])
+					if (m < vol[idx])
 						m = vol[idx];
 				}
 			});
