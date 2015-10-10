@@ -1,0 +1,40 @@
+COREDIR=../Core
+LIBDIR=../Libs
+
+CXXFLAGS=-I. -I$(COREDIR) -std=c++11
+SHRFLAGS=-shared
+
+PLATFORM=$(shell $(CXX) -v 2>&1|grep Target|cut -f3 -d'-')
+ifeq "$(PLATFORM)" "mingw32"
+	CXXFLAGS+=-DUNICODE
+	DRES=res.o
+	DEXT=dll
+	ifeq "$(WRC)" ""
+		WRC=$(subst g++,windres,$(CXX))
+	endif
+	LDFLAGS=-L$(LIBDIR)/FFTW
+else
+	SHRFLAGS+=-fPIC
+	ifeq "$(PLATFORM)" "linux"
+		DEXT=so
+	else
+		DEXT=dylib
+	endif
+endif
+
+SYSTUNE=-march=native -mtune=native
+#SYSARCH=$(shell $(CXX) -v 2>&1|grep Target|cut -f1 -d'-'|cut -f2 -d' ')
+#ifeq "$(SYSARCH)" "x86_64"
+#	SYSTUNE+=-msse2
+#endif
+
+ifeq "$(DEBUG)" "1"
+OPTS=-O0 -g3
+else
+OPTS=-O3 -s -fomit-frame-pointer
+endif
+
+CXXFLAGS+=$(SYSTUNE) $(OPTS)
+
+CORE=$(COREDIR)/dllmain.cpp $(COREDIR)/barrier.h
+

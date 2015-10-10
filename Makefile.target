@@ -1,0 +1,14 @@
+all: $(TARGET)
+
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) $(SHRFLAGS) -c $<
+
+$(TARGET): $(OBJS)
+	$(CXX) $(OPTS) $(SHRFLAGS) -o $@ $(OBJS) $(LDFLAGS) $(LIBS)
+
+clean:
+	rm -f $(OBJS)
+
+distclean: clean
+	rm -f $(TARGET)
+
