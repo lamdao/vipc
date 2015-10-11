@@ -1,6 +1,7 @@
 //------------------------------------------------------------------------
 #include "typedefs.h"
 #include "dthread.h"
+#include "vdim.h"
 //------------------------------------------------------------------------
 // Library entry
 //------------------------------------------------------------------------
@@ -18,42 +19,6 @@ BOOL APIENTRY DllMain(HINSTANCE hModule, DWORD dwReason, LPVOID lpReserved)
 	return TRUE;
 }
 #endif
-//--------------------------------------------------------------------------
-// Volume info/utils
-//--------------------------------------------------------------------------
-static int VX, VY, VZ, VT;	// volume dimensions (X,Y,Z) and type
-//--------------------------------------------------------------------------
-static size_t VP, VS;		// volume plane size (VP), volume size (VS)
-//--------------------------------------------------------------------------
-static inline size_t pos2idx(int x, int y, int z)
-{
-	return (size_t)z * VP + (size_t)y * VX + (size_t)x;
-}
-//--------------------------------------------------------------------------
-static inline void idx2pos(size_t n, int &x, int &y, int &z)
-{
-	z = (int)(n / VP); n = n % VP;
-	y = (int)(n / VX);
-	x = (int)(n % VX);
-}
-//------------------------------------------------------------------------
-static inline void vdim_setup(char *cdim, int &vx, int &vy, int &vz,
-							int &vt, size_t &vp, size_t &vs)
-{
-	int *dim = (int *)cdim;
-	vx = dim[1],
-	vy = dim[2];
-	vz = dim[3];
-	vt = dim[4];
-	vp = (size_t)vx * (size_t)vy;
-	vs = (size_t)vp * (size_t)vz;
-}
-//------------------------------------------------------------------------
-static inline void vdim_setup(char *cdim)
-{
-	vdim_setup(cdim, VX, VY, VZ, VT, VP, VS);
-	DThread::CalcWorkload(VS);
-}
 //------------------------------------------------------------------------
 // Kernel Voxel management
 //------------------------------------------------------------------------
