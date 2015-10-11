@@ -80,8 +80,6 @@ static int NUM_THREADS = omp_get_max_threads();
 static int NUM_THREADS = thread::hardware_concurrency();
 #endif
 //--------------------------------------------------------------------------
-static vector<thread> workers(NUM_THREADS);
-//--------------------------------------------------------------------------
 static inline size_t pos2idx(int x, int y, int z)
 {
 	return (size_t)z * VP + (size_t)y * VX + (size_t)x;
@@ -107,6 +105,7 @@ static inline void thread_start(Functor action) {
 		action(omp_get_thread_num());
 	}
 #else
+	static vector<thread> workers(NUM_THREADS);
 	int __thread_id = 0;
 	for (auto &w : workers) {
 		w = thread(action, __thread_id);
