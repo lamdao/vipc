@@ -1,49 +1,43 @@
 #ifndef __STDTHREAD_BARRIER_H
 #define __STDTHREAD_BARRIER_H
 //--------------------------------------------------------------------------
-#include <omp.h>
-#include <map>
-#include <chrono>
-#include <thread>
-#include <algorithm>
-//--------------------------------------------------------------------------
-// This is ugly but kinda effective in reseting barrier (?!)
+#include <mutex>
+#include <condition_variable>
 //--------------------------------------------------------------------------
 class Barrier
 {
+	enum State {Up, Down};
 private:
-	int nthreads;
 #ifndef _OPENMP
-	std::map<std::thread::id,bool> ready;
-
-	inline bool all_ready()
-	{
-		if (ready.size() < nthreads)
-			return false;
-
-		for (auto &r : ready) {
-			if (!r.second) return false;
-		}
-		return true;
-	}
+	std::mutex mtx;
+	std::condition_variable cv;
 #endif
+	size_t count, nthreads;
+	State state;
 public:
-	explicit Barrier(int nthreads): nthreads(nthreads) {}
-
-	inline void wait()
-	{
+	explicit Barrier(std::size_t nthr):
+				count(nthr), nthreads(nthr),
+				state(State::Down) {}
+	void wait() {
 	#ifdef _OPENMP
 		#pragma omp barrier
 	#else
-		std::thread::id n = this_thread::get_id();
-		ready[n] = true;	// not busy anymore
-		while (true) {		// wait for all others to finish
-			if (all_ready())
-				break;
-			this_thread::sleep_for(std::chrono::milliseconds(5));
+		std::unique_lock<std::mutex> lock(mtx);
+		if (state == State::Up) {
+			if (++count == nthreads) {
+				state = State::Down;
+				cv.notify_all();
+			} else {
+				cv.wait(lock, [this] { return state == State::Down; });
+			}
+		} else {
+			if (--count == 0) {
+				state = State::Up;
+				cv.notify_all();
+			} else {
+				cv.wait(lock, [this] { return state == State::Up; });
+			}
 		}
-		this_thread::sleep_for(std::chrono::milliseconds(10*ready.size()));
-		ready[n] = false;	// go back to busy state
 	#endif
 	}
 };
