@@ -95,15 +95,23 @@ static inline void calc_workload(size_t total)
 	load = (total / NUM_THREADS) + ((total % NUM_THREADS) > 0);
 }
 //--------------------------------------------------------------------------
-#define thread_start(action) {							\
-	int __thread_id = 0;								\
-	for (auto &w : workers) {							\
-		w = thread(action, __thread_id);				\
-		__thread_id++;									\
-	}													\
-	for (auto &w : workers) {							\
-		w.join();										\
-	}													\
+template<class Functor>
+static inline void thread_start(Functor action) {
+#ifdef _OPENMP
+	#pragma omp parallel
+	{
+		action(omp_get_thread_num());
+	}
+#else
+	int __thread_id = 0;
+	for (auto &w : workers) {
+		w = thread(action, __thread_id);
+		__thread_id++;
+	}
+	for (auto &w : workers) {
+		w.join();
+	}
+#endif
 }
 //--------------------------------------------------------------------------
 #define calc_working_range(start, stop)					\

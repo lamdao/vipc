@@ -472,7 +472,7 @@ void anisotropic_filter(int niters)
 				double d = z < VZ - 1 ? v - dsrc[idx + VP] : v;
 				dres[idx] = (dtype)(v + DT*(gflow(e) - gflow(w) + gflow(n) - gflow(s) + gflow(u) - gflow(d)));
 			}
-			barrier.wait(__thread_id);
+			barrier.wait();
 			if (ni < niters) {
 				dtype *t = dsrc;
 				dsrc = dres;
@@ -549,7 +549,7 @@ void laplace_filter(int niters)
 				}
 				dres[idx] = (dtype)(dsrc[idx] + DT * (v - (double)n * dsrc[idx]) / 2.0);
 			}
-			barrier.wait(__thread_id);
+			barrier.wait();
 
 			if (ni < niters) {
 				dtype *t = dsrc;

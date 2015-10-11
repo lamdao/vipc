@@ -1,7 +1,8 @@
 #ifndef __STDTHREAD_BARRIER_H
 #define __STDTHREAD_BARRIER_H
 //--------------------------------------------------------------------------
-#include <vector>
+#include <omp.h>
+#include <map>
 #include <chrono>
 #include <thread>
 #include <algorithm>
@@ -11,28 +12,39 @@
 class Barrier
 {
 private:
-	std::vector<bool> ready;
+	int nthreads;
+#ifndef _OPENMP
+	std::map<std::thread::id,bool> ready;
 
 	inline bool all_ready()
 	{
-		for (auto r : ready) {
-			if (!r) return false;
+		if (ready.size() < nthreads)
+			return false;
+
+		for (auto &r : ready) {
+			if (!r.second) return false;
 		}
 		return true;
 	}
+#endif
 public:
-	explicit Barrier(int nthreads): ready(nthreads) {}
+	explicit Barrier(int nthreads): nthreads(nthreads) {}
 
-	inline void wait(const int id)
+	inline void wait()
 	{
-		ready[id] = true;	// not busy anymore
+	#ifdef _OPENMP
+		#pragma omp barrier
+	#else
+		std::thread::id n = this_thread::get_id();
+		ready[n] = true;	// not busy anymore
 		while (true) {		// wait for all others to finish
 			if (all_ready())
 				break;
 			this_thread::sleep_for(std::chrono::milliseconds(5));
 		}
 		this_thread::sleep_for(std::chrono::milliseconds(10*ready.size()));
-		ready[id] = false;	// go back to busy state
+		ready[n] = false;	// go back to busy state
+	#endif
 	}
 };
 //--------------------------------------------------------------------------
