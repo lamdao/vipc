@@ -119,7 +119,7 @@ void median_kernel_filter()
 {
 	dtype *dres = (dtype *)tmp;
 	dtype *dsrc = (dtype *)vol;
-	thread_start([=](const int __thread_id) {
+	DThread::Start([=](const int __thread_id) {
 		vector<dtype> dtmp(kvm.size);
 		calc_working_range(start, stop);
 		for (size_t idx = start; idx < stop; idx++) {
@@ -137,7 +137,7 @@ void median_box_filter()
 {
 	dtype *dres = (dtype *)tmp;
 	dtype *dsrc = (dtype *)vol;
-	thread_start([=](const int __thread_id){
+	DThread::Start([=](const int __thread_id){
 		vector<dtype> dtmp(kvm.size);
 		calc_working_range(start, stop);
 		for (size_t idx = start; idx < stop; idx++) {
@@ -236,7 +236,7 @@ void mediancdf_box_filter()
 			dres[idx] = (dtype)cdfsel(&dtmp[0], tail, count);
 		}
 	};
-	thread_start(thr);
+	DThread::Start(thr);
 }
 //--------------------------------------------------------------------------
 DLAPI int vol_mediancdf_filter(int argc, char *argv[])
@@ -254,7 +254,7 @@ void mean_kernel_filter()
 	dtype *dres = (dtype *)tmp;
 	dtype *dsrc = (dtype *)vol;
 
-	thread_start([=](const int __thread_id) {
+	DThread::Start([=](const int __thread_id) {
 		calc_working_range(start, stop);
 		for (size_t idx=start; idx < stop; idx++) {
 			int count = 0;
@@ -274,7 +274,7 @@ void mean_box_filter()
 	dtype *dres = (dtype *)tmp;
 	dtype *dsrc = (dtype *)vol;
 
-	thread_start([=](const int __thread_id){
+	DThread::Start([=](const int __thread_id){
 		calc_working_range(start, stop);
 		for (size_t idx = start; idx < stop; idx++) {
 			int count = 0;
@@ -347,7 +347,7 @@ double calc_kernel_var_range(dtype *vol, size_t idx, double &sum, double *data, 
 template<class dtype>
 void sigma_kernel_filter()
 {
-	thread_start([](const int __thread_id){
+	DThread::Start([](const int __thread_id){
 		sigma_filter_main(calc_kernel_var_range);
 	});
 }
@@ -370,7 +370,7 @@ double calc_box_var_range(dtype *vol, size_t idx, double &sum, double *data, int
 template<class dtype>
 void sigma_box_filter()
 {
-	thread_start([](const int __thread_id){
+	DThread::Start([](const int __thread_id){
 		sigma_filter_main(calc_box_var_range);
 	});
 }
@@ -480,7 +480,7 @@ void anisotropic_filter(int niters)
 			}
 		}
 	};
-	thread_start(thr);
+	DThread::Start(thr);
 }
 //--------------------------------------------------------------------------
 DLAPI int vol_anisotropic_filter(int argc, char *argv[])
@@ -559,7 +559,7 @@ void laplace_filter(int niters)
 		}
 	};
 
-	thread_start(thr);
+	DThread::Start(thr);
 }
 //--------------------------------------------------------------------------
 DLAPI int vol_laplace_filter(int argc, char *argv[])

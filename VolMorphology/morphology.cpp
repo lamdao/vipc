@@ -27,7 +27,7 @@ namespace Morphology
 		VZ = dim[2];
 		VP = (size_t)VX * (size_t)VY;
 		VS = (size_t)VP * (size_t)VZ;
-		calc_workload(VS);
+		DThread::CalcWorkload(VS);
 
 		if (buffer.size() != VS) {
 			vector<ushort> buf(VS);
@@ -58,7 +58,7 @@ namespace Morphology
 		void FindMaxValue()
 		{
 			vector<ushort> vx(NUM_THREADS);
-			thread_start([&vx](const int __thread_id) {
+			DThread::Start([&vx](const int __thread_id) {
 				ushort &m = vx[__thread_id];
 				calc_working_range(start, stop);
 				for (size_t idx = start; idx < stop; idx++) {
@@ -75,7 +75,7 @@ namespace Morphology
 		}
 		void Dilate()
 		{
-			thread_start([](const int __thread_id) {
+			DThread::Start([](const int __thread_id) {
 				calc_working_range(start, stop);
 				for (size_t idx = start; idx < stop; idx++) {
 					int smax = 0;
@@ -98,7 +98,7 @@ namespace Morphology
 		//------------------------------------------------------------------
 		void Erode()
 		{
-			thread_start([](const int __thread_id) {
+			DThread::Start([](const int __thread_id) {
 				calc_working_range(start, stop);
 				for (size_t idx = start; idx < stop; idx++) {
 					int smin = vmax;
@@ -124,7 +124,7 @@ namespace Morphology
 	namespace Binary {
 		void Dilate()
 		{
-			thread_start([](const int __thread_id) {
+			DThread::Start([](const int __thread_id) {
 				calc_working_range(start, stop);
 				for (size_t idx = start; idx < stop; idx++) {
 					for_each_kernel_voxel(kx, ky, kz, {
@@ -142,7 +142,7 @@ namespace Morphology
 		}
 		//------------------------------------------------------------------
 		void Erode() {
-			thread_start([](const int __thread_id) {
+			DThread::Start([](const int __thread_id) {
 				calc_working_range(start, stop);
 				for (size_t idx = start; idx < stop; idx++) {
 					for_each_kernel_voxel(kx, ky, kz, {

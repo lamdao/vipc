@@ -32,7 +32,7 @@ bool gradient_detect(dtype *vol)
 			}
 		}
 	};
-	thread_start(thr);
+	DThread::Start(thr);
 	return found;
 }
 //--------------------------------------------------------------------------
@@ -153,7 +153,7 @@ void vol_resize_lanczos()
 			dst[idx] = (dtype)(dv < 0 ? 0 : (dv > dmax ? dmax : dv));
 		}
 	};
-	thread_start(thr);
+	DThread::Start(thr);
 }
 //--------------------------------------------------------------------------
 // Akima interpolation
@@ -223,7 +223,7 @@ void vol_resize_akima()
 			dst[idx] = (dtype)(dv < 0 ? 0 : (dv > dmax ? dmax : dv));
 		}
 	};
-	thread_start(thr);
+	DThread::Start(thr);
 }
 #undef N
 //--------------------------------------------------------------------------
@@ -283,7 +283,7 @@ void vol_resize_tricubic()
 			dst[idx] = (dtype)(dv < 0 ? 0 : (dv > dmax ? dmax : dv));
 		}
 	};
-	thread_start(thr);
+	DThread::Start(thr);
 }
 //--------------------------------------------------------------------------
 // Linear interpolation
@@ -327,7 +327,7 @@ void vol_resize_trilinear()
 			);
 		}
 	};
-	thread_start(thr);
+	DThread::Start(thr);
 }
 //--------------------------------------------------------------------------
 // Nearest neighbor interpolation
@@ -349,7 +349,7 @@ void vol_resize_nearest()
 			dst[idx] = src[z * RP + y * RW + x];
 		}
 	};
-	thread_start(thr);
+	DThread::Start(thr);
 }
 //--------------------------------------------------------------------------
 #define	def_resize_func(name)							\
@@ -418,7 +418,7 @@ void vol_mirror(dtype *src, dtype *dst)
 			dst[idx] = src[vz * SVP + vy * RW + vx];
 		}
 	};
-	thread_start(thr);
+	DThread::Start(thr);
 }
 //--------------------------------------------------------------------------
 DLAPI int vol_mirror(int argc, char *argv[])
@@ -463,7 +463,7 @@ void vol_cdist_center(dtype *vol)
 			vol[idx] = nosqrt ? (dtype)d : (dtype)sqrt(d);
 		}
 	};
-	thread_start(thr);
+	DThread::Start(thr);
 }
 //--------------------------------------------------------------------------
 template<class dtype>
@@ -483,7 +483,7 @@ void vol_cdist_shift(dtype *vol)
 			vol[idx] = nosqrt ? (dtype)d : (dtype)sqrt(d);
 		}
 	};
-	thread_start(thr);
+	DThread::Start(thr);
 }
 //--------------------------------------------------------------------------
 void vol_cdistance()
@@ -526,7 +526,7 @@ void vol_hmcalc(dtype *vol, double *p)
 			vol[idx] = (dtype)(H * (1 - exp(C * vol[idx] / D0)) + L);
 		}
 	};
-	thread_start(thr);
+	DThread::Start(thr);
 }
 //--------------------------------------------------------------------------
 DLAPI int vol_homomorphic(int argc, char *argv[])
