@@ -74,7 +74,11 @@ static size_t VP, VS;		// volume plane size (VP), volume size (VS)
 //------------------------------------------------------------------------
 static size_t load;		// workload
 //--------------------------------------------------------------------------
+#ifdef _OPENMP
+static int NUM_THREADS = omp_get_max_threads();
+#else
 static int NUM_THREADS = thread::hardware_concurrency();
+#endif
 //--------------------------------------------------------------------------
 static vector<thread> workers(NUM_THREADS);
 //--------------------------------------------------------------------------
