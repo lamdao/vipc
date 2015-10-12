@@ -36,5 +36,6 @@ endif
 
 CXXFLAGS+=$(SYSTUNE) $(OPTS)
 
-CORE=$(COREDIR)/dllmain.cpp $(COREDIR)/barrier.h
+CORE=$(COREDIR)/dllmain.cpp $(COREDIR)/barrier.h $(COREDIR)/kvm.h \
+	 $(COREDIR)/dthread.h $(COREDIR)/vdim.h $(COREDIR)/typedefs.h
 
