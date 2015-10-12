@@ -72,7 +72,7 @@ public:
 	void setup(int n, ktype *mask)
 	{
 		w = h = d = n;
-		setup(n, n, n, n*n*n, mask);
+		setup(n, n, n, size=n*n*n, mask);
 	}
 	inline bool operator ()(int n, int vx, int vy, int vz, int &kx, int &ky, int &kz) {
 		kx = vx + data[n].dx;
