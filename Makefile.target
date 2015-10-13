@@ -1,3 +1,7 @@
+ifeq "$(PLATFORM)" "mingw32"
+LIBS+=-static -lgcc
+endif
+
 all: $(TARGET)
 
 %.o: %.cpp
