@@ -34,6 +34,10 @@ ifeq "$(USE_OMP)" "1"
 OPTS+=-fopenmp
 endif
 
+ifeq "$(NO_AFFINITY)" ""
+OPTS+=-DUSE_AFFINITY
+endif
+
 CXXFLAGS+=$(SYSTUNE) $(OPTS)
 
 CORE=$(COREDIR)/dllmain.cpp $(COREDIR)/barrier.h $(COREDIR)/kvm.h \
