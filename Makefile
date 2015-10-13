@@ -1,4 +1,4 @@
-TARGET=VolFilters VolMorphology VolProcess
+TARGET=VolFilters VolMorphology VolProcess VolTensors
 
 all:
 	@for t in $(TARGET); do	\
