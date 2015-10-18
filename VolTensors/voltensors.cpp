@@ -39,7 +39,7 @@ static inline void dvdist(double *d, float *edv)
 		int x, y, z;													\
 		idx2pos(idx, x, y, z);											\
 		if (x > 0 && y > 0 && z > 0 && x < VX1 && y < VY1 && z < VZ1)	\
-			dx[idx] = (vol[idx+1] - vol[idx-1]) / 2;					\
+			dx[idx] = (vol[idx+1] - vol[idx-1]) / 2.0;					\
 	}																	\
 }
 //--------------------------------------------------------------------------
@@ -48,7 +48,7 @@ static inline void dvdist(double *d, float *edv)
 		int x, y, z;													\
 		idx2pos(idx, x, y, z);											\
 		if (x > 0 && y > 0 && z > 0 && x < VX1 && y < VY1 && z < VZ1)	\
-			dy[idx] = (vol[idx+VX] - vol[idx-VX]) / 2;					\
+			dy[idx] = (vol[idx+VX] - vol[idx-VX]) / 2.0;				\
 	}																	\
 }
 //--------------------------------------------------------------------------
@@ -57,7 +57,7 @@ static inline void dvdist(double *d, float *edv)
 		int x, y, z;													\
 		idx2pos(idx, x, y, z);											\
 		if (x > 0 && y > 0 && z > 0 && x < VX1 && y < VY1 && z < VZ1)	\
-			dz[idx] = (vol[idx+VP] - vol[idx-VP]) / 2;					\
+			dz[idx] = (vol[idx+VP] - vol[idx-VP]) / 2.0;				\
 	}																	\
 }
 //--------------------------------------------------------------------------
